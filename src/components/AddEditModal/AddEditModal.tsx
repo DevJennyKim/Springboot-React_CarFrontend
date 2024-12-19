@@ -25,9 +25,6 @@ function AddEditModal({
 
   useEffect(() => {
     if (selectedCar) {
-      console.log('selectedCar:', selectedCar);
-      console.log('type-year:', typeof selectedCar.year);
-
       setFormData({
         brand: selectedCar.brand,
         model: selectedCar.model,

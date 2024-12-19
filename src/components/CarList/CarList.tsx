@@ -2,20 +2,35 @@ import {
   DataGrid,
   gridClasses,
   GridRenderCellParams,
+  GridToolbarColumnsButton,
   GridToolbarContainer,
+  GridToolbarDensitySelector,
   GridToolbarExport,
+  GridToolbarFilterButton,
 } from '@mui/x-data-grid';
 import './CarList.scss';
 import * as api from '../../api/api.ts';
 import * as type from '../../models/Index.js';
 import AddEditModal from '../AddEditModal/AddEditModal.tsx';
 import { useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 // import Snackbar from '@mui/material/Snackbar';
 
 function CustomToolbar() {
   return (
-    <GridToolbarContainer className={gridClasses.toolbarContainer}>
-      <GridToolbarExport />
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector
+        slotProps={{ tooltip: { title: 'Change density' } }}
+      />
+      <Box sx={{ flexGrow: 1 }} />
+      <GridToolbarExport
+        slotProps={{
+          tooltip: { title: 'Export data' },
+          button: { variant: 'outlined' },
+        }}
+      />
     </GridToolbarContainer>
   );
 }
@@ -28,6 +43,7 @@ function CarList() {
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCar, setSelectedCar] = useState<type.Car | null>(null);
+  const [action, setAction] = useState<string>('');
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -62,6 +78,7 @@ function CarList() {
     setModalOpen(true);
   };
 
+  const handleAddCar = async (carData: type.FormData) => {};
   const handleSaveCar = async (carData: type.FormData) => {
     try {
       console.log('year: ', typeof carData.year);
@@ -122,23 +139,11 @@ function CarList() {
         </button>
       ),
     },
-
-    {
-      field: '_links.car.href',
-      headerName: '',
-      sortable: false,
-      filterable: false,
-    },
-    {
-      field: '_links.self.href',
-      headerName: '',
-      sortable: false,
-      filterable: false,
-    },
   ];
 
   return (
     <div className="grid">
+      <button type="button">Add</button>
       <DataGrid
         rows={cars}
         columns={columns}
