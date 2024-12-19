@@ -4,8 +4,21 @@ import {
   GridToolbarContainer,
   GridToolbarExport,
 } from '@mui/x-data-grid';
-import { useState } from 'react';
+import './CarList.scss';
+import { getCars } from '../../api/api.js';
+import { useEffect, useState } from 'react';
 // import Snackbar from '@mui/material/Snackbar';
+
+interface Link {
+  href: string;
+}
+
+interface Links {
+  profile: Link;
+  search: Link;
+  self: Link;
+}
+
 interface Car {
   brand: string;
   model: string;
@@ -13,6 +26,7 @@ interface Car {
   registerNumber: string;
   year: number;
   price: number;
+  _links: Links;
 }
 function CustomToolbar() {
   return (
@@ -24,7 +38,25 @@ function CustomToolbar() {
 
 function CarList() {
   const [cars, setCars] = useState<Car[]>([]);
-  const [open, setOpen] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 12,
+  });
+  // const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchCars = async () => {
+      try {
+        const response = await getCars();
+        const carsData = response._embedded?.cars || [];
+        setCars(carsData);
+        console.log(carsData);
+      } catch (error) {
+        console.error('Error Fetching Cars: ', error);
+      }
+    };
+    fetchCars();
+  }, []);
 
   const columns = [
     { field: 'brand', headerName: 'Brand', width: 200 },
@@ -47,9 +79,19 @@ function CarList() {
   ];
 
   return (
-    <>
-      <DataGrid rows={cars} columns={columns}></DataGrid>
-    </>
+    <div className="grid">
+      <DataGrid
+        rows={cars}
+        columns={columns}
+        disableRowSelectionOnClick={true}
+        getRowId={(row) => row._links.self.href}
+        slots={{ toolbar: CustomToolbar }}
+        pagination
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        pageSizeOptions={[5, 10, 15, 20]}
+      ></DataGrid>
+    </div>
   );
 }
 
