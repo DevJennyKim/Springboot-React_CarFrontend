@@ -13,9 +13,9 @@ export const getCars = async () => {
   }
 };
 
-export const deleteCar = async () => {
+export const deleteCar = async (carHref: string) => {
   try {
-    await axios.delete(`${baseUrl}/api/car/${carId}`);
+    await axios.delete(`${carHref}`);
   } catch (error) {
     console.error('Could not delete car: ', error);
     throw new Error('Error deleting car');

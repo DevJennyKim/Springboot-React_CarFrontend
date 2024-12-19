@@ -6,29 +6,12 @@ import {
   GridToolbarExport,
 } from '@mui/x-data-grid';
 import './CarList.scss';
-import * as api from '../../api/api.js';
+import * as api from '../../api/api.ts';
+import { Car } from '../../models/Index.js';
+import AddEditModal from '../AddEditModal/AddEditModal.tsx';
 import { useEffect, useState } from 'react';
 // import Snackbar from '@mui/material/Snackbar';
 
-interface Link {
-  href: string;
-}
-
-interface Links {
-  profile: Link;
-  search: Link;
-  self: Link;
-}
-
-interface Car {
-  brand: string;
-  model: string;
-  color: string;
-  registerNumber: string;
-  year: number;
-  price: number;
-  _links: Links;
-}
 function CustomToolbar() {
   return (
     <GridToolbarContainer className={gridClasses.toolbarContainer}>
@@ -43,7 +26,8 @@ function CarList() {
     page: 0,
     pageSize: 12,
   });
-  // const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -73,8 +57,9 @@ function CarList() {
       }
     }
   };
-  const editCar = async (carHref: string) => {
-    console.log(carHref);
+  const editCar = (car: Car) => {
+    setSelectedCar(car);
+    setModalOpen(true);
   };
 
   const columns = [
@@ -85,22 +70,19 @@ function CarList() {
     { field: 'price', headerName: 'Price', width: 150 },
 
     {
-      field: 'actions',
+      field: 'editActions',
       headerName: 'Edit',
       width: 150,
       sortable: false,
       filterable: false,
       renderCell: (params: GridRenderCellParams<Car>) => (
-        <button
-          className="edit-button"
-          onClick={() => editCar(params.row._links.self.href)}
-        >
+        <button className="edit-button" onClick={() => editCar(params.row)}>
           Edit
         </button>
       ),
     },
     {
-      field: 'actions',
+      field: 'deleteActions',
       headerName: 'Delete',
       width: 150,
       sortable: false,
@@ -141,7 +123,8 @@ function CarList() {
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[5, 10, 15, 20]}
-      ></DataGrid>
+      />
+      <AddEditModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }
