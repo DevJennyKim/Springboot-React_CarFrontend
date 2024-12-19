@@ -5,7 +5,7 @@ import {
   GridToolbarExport,
 } from '@mui/x-data-grid';
 import './CarList.scss';
-import { getCars } from '../../api/api.js';
+import * as api from '../../api/api.js';
 import { useEffect, useState } from 'react';
 // import Snackbar from '@mui/material/Snackbar';
 
@@ -47,7 +47,7 @@ function CarList() {
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const response = await getCars();
+        const response = await api.getCars();
         const carsData = response._embedded?.cars || [];
         setCars(carsData);
         console.log(carsData);
@@ -57,6 +57,18 @@ function CarList() {
     };
     fetchCars();
   }, []);
+
+  const removeCar = async () => {
+    if (window.confirm('Are you sure to delete?')) {
+      try {
+        await api.deleteCar();
+      } catch (error) {
+        console.error('Error Removing Cars: ', error);
+      }
+    } else {
+      alert('something went wrong!');
+    }
+  };
 
   const columns = [
     { field: 'brand', headerName: 'Brand', width: 200 },
