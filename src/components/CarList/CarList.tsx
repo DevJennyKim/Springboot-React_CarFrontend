@@ -7,7 +7,7 @@ import {
 } from '@mui/x-data-grid';
 import './CarList.scss';
 import * as api from '../../api/api.ts';
-import { Car } from '../../models/Index.js';
+import * as type from '../../models/Index.js';
 import AddEditModal from '../AddEditModal/AddEditModal.tsx';
 import { useEffect, useState } from 'react';
 // import Snackbar from '@mui/material/Snackbar';
@@ -21,13 +21,13 @@ function CustomToolbar() {
 }
 
 function CarList() {
-  const [cars, setCars] = useState<Car[]>([]);
+  const [cars, setCars] = useState<type.Car[]>([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 12,
   });
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+  const [selectedCar, setSelectedCar] = useState<type.Car | null>(null);
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -57,11 +57,11 @@ function CarList() {
       }
     }
   };
-  const editCar = (car: Car) => {
+  const editCar = (car: type.Car) => {
     setSelectedCar(car);
     setModalOpen(true);
   };
-
+  const handleSaveCar = async (carHref: string, carData: type.FormData) => {};
   const columns = [
     { field: 'brand', headerName: 'Brand', width: 200 },
     { field: 'model', headerName: 'Model', width: 200 },
@@ -124,7 +124,12 @@ function CarList() {
         onPaginationModelChange={setPaginationModel}
         pageSizeOptions={[5, 10, 15, 20]}
       />
-      <AddEditModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <AddEditModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        selectedCar={selectedCar}
+        onSave={handleSaveCar}
+      />
     </div>
   );
 }

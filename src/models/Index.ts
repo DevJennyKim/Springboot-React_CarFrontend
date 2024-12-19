@@ -18,7 +18,16 @@ export interface Car {
   _links: Links;
 }
 
+export interface FormData {
+  brand: string;
+  model: string;
+  color: string;
+  year: string;
+  price: string;
+}
 export interface AddEditModalProps {
   open: boolean;
   onClose: () => void;
+  selectedCar: Car | null;
+  onSave: (carData: Car) => void;
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import * as type from '../models/Index';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 
 export const getCars = async () => {
@@ -15,9 +15,18 @@ export const getCars = async () => {
 
 export const deleteCar = async (carHref: string) => {
   try {
-    await axios.delete(`${carHref}`);
+    await axios.delete(carHref);
   } catch (error) {
     console.error('Could not delete car: ', error);
     throw new Error('Error deleting car');
+  }
+};
+
+export const updateCar = async (carHref: string, updateCar: type.FormData) => {
+  try {
+    await axios.put(carHref, updateCar);
+  } catch (error) {
+    console.error('Could not update car: ', error);
+    throw new Error('Error updating car');
   }
 };
