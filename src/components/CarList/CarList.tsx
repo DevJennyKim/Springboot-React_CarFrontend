@@ -1,6 +1,7 @@
 import {
   DataGrid,
   gridClasses,
+  GridRenderCellParams,
   GridToolbarContainer,
   GridToolbarExport,
 } from '@mui/x-data-grid';
@@ -58,15 +59,18 @@ function CarList() {
     fetchCars();
   }, []);
 
-  const removeCar = async () => {
-    if (window.confirm('Are you sure to delete?')) {
+  const removeCar = async (carHref: string) => {
+    if (window.confirm('Are you sure you want to delete this car?')) {
       try {
-        await api.deleteCar();
+        await api.deleteCar(carHref);
+        setCars((prevCars) =>
+          prevCars.filter((car) => car._links.self.href !== carHref)
+        );
+        alert('Car deleted successfully!');
       } catch (error) {
-        console.error('Error Removing Cars: ', error);
+        console.error('Error Removing Car: ', error);
+        alert('Failed to delete the car.');
       }
-    } else {
-      alert('something went wrong!');
     }
   };
 
@@ -76,6 +80,21 @@ function CarList() {
     { field: 'color', headerName: 'Color', width: 200 },
     { field: 'year', headerName: 'Year', width: 150 },
     { field: 'price', headerName: 'Price', width: 150 },
+    {
+      field: 'actions',
+      headerName: 'Delete',
+      width: 150,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: GridRenderCellParams<Car>) => (
+        <button
+          className="delete-button"
+          onClick={() => removeCar(params.row._links.self.href)}
+        >
+          Delete
+        </button>
+      ),
+    },
     {
       field: '_links.car.href',
       headerName: '',
