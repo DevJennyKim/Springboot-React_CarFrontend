@@ -61,7 +61,33 @@ function CarList() {
     setSelectedCar(car);
     setModalOpen(true);
   };
-  const handleSaveCar = async (carHref: string, carData: type.FormData) => {};
+
+  const handleSaveCar = async (carData: type.FormData) => {
+    try {
+      console.log('year: ', typeof carData.year);
+      console.log('price: ', typeof carData.price);
+      const updatedCarData = {
+        ...carData,
+        year: carData.year,
+        price: carData.price,
+      };
+      if (selectedCar) {
+        await api.updateCar(selectedCar._links.self.href, updatedCarData);
+        setCars((prevCars) =>
+          prevCars.map((car) =>
+            car._links.self.href === selectedCar._links.self.href
+              ? { ...car, ...updatedCarData }
+              : car
+          )
+        );
+        alert('Car updated successfully!');
+        setModalOpen(false);
+      }
+    } catch (error) {
+      console.error('Error Updating Car: ', error);
+      alert('Failed to update the car.');
+    }
+  };
   const columns = [
     { field: 'brand', headerName: 'Brand', width: 200 },
     { field: 'model', headerName: 'Model', width: 200 },
@@ -75,7 +101,7 @@ function CarList() {
       width: 150,
       sortable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<Car>) => (
+      renderCell: (params: GridRenderCellParams<type.Car>) => (
         <button className="edit-button" onClick={() => editCar(params.row)}>
           Edit
         </button>
@@ -87,7 +113,7 @@ function CarList() {
       width: 150,
       sortable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<Car>) => (
+      renderCell: (params: GridRenderCellParams<type.Car>) => (
         <button
           className="delete-button"
           onClick={() => removeCar(params.row._links.self.href)}

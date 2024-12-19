@@ -22,12 +22,12 @@ export interface FormData {
   brand: string;
   model: string;
   color: string;
-  year: string;
-  price: string;
+  year: number;
+  price: number;
 }
 export interface AddEditModalProps {
   open: boolean;
   onClose: () => void;
   selectedCar: Car | null;
-  onSave: (carData: Car) => void;
+  onSave: (carData: FormData) => void;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AddEditModalProps } from '../../models/Index.js';
+import { AddEditModalProps, FormData } from '../../models/Index.js';
 import {
   Dialog,
   DialogActions,
@@ -41,17 +41,19 @@ function AddEditModal({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'year' || name === 'price') {
-      setFormData({
-        ...formData,
-        [name]: value ? parseFloat(value) : 0,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSave = () => {
+    const carData: FormData = {
+      ...formData,
+      year: parseInt(formData.year),
+      price: parseInt(formData.price),
+    };
+    onSave(carData);
   };
   return (
     <Dialog open={open} onClose={onClose}>
@@ -104,7 +106,7 @@ function AddEditModal({
         <Button onClick={onClose} color="primary">
           Close
         </Button>
-        <Button onClick={onSave} color="primary">
+        <Button onClick={handleSave} color="primary">
           Save
         </Button>
       </DialogActions>
