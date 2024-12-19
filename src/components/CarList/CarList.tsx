@@ -73,6 +73,9 @@ function CarList() {
       }
     }
   };
+  const editCar = async (carHref: string) => {
+    console.log(carHref);
+  };
 
   const columns = [
     { field: 'brand', headerName: 'Brand', width: 200 },
@@ -80,6 +83,22 @@ function CarList() {
     { field: 'color', headerName: 'Color', width: 200 },
     { field: 'year', headerName: 'Year', width: 150 },
     { field: 'price', headerName: 'Price', width: 150 },
+
+    {
+      field: 'actions',
+      headerName: 'Edit',
+      width: 150,
+      sortable: false,
+      filterable: false,
+      renderCell: (params: GridRenderCellParams<Car>) => (
+        <button
+          className="edit-button"
+          onClick={() => editCar(params.row._links.self.href)}
+        >
+          Edit
+        </button>
+      ),
+    },
     {
       field: 'actions',
       headerName: 'Delete',
@@ -95,6 +114,7 @@ function CarList() {
         </button>
       ),
     },
+
     {
       field: '_links.car.href',
       headerName: '',
