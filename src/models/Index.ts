@@ -30,5 +30,6 @@ export interface AddEditModalProps {
   open: boolean;
   onClose: () => void;
   selectedCar: Car | null;
+
   onSave: (carData: FormData) => void;
 }

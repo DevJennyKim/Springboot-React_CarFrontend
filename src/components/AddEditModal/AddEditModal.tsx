@@ -62,6 +62,14 @@ function AddEditModal({
       price: parseInt(formData.price),
     };
     onSave(carData);
+    setFormData({
+      brand: '',
+      model: '',
+      color: '',
+      registerNumber: '',
+      year: '',
+      price: '',
+    });
   };
 
   return (

@@ -5,7 +5,7 @@ const baseUrl = import.meta.env.VITE_BASE_URL;
 export const getCars = async () => {
   try {
     const { data } = await axios.get(`${baseUrl}/api/cars`);
-    console.log(data);
+
     return data;
   } catch (error) {
     console.error('Could not get cars list: ', error);
@@ -15,7 +15,8 @@ export const getCars = async () => {
 
 export const postCar = async (formData: type.FormData) => {
   try {
-    await axios.post(`${baseUrl}/api/cars`, formData);
+    const { data } = await axios.post(`${baseUrl}/api/cars`, formData);
+    return data;
   } catch (error) {
     console.error('Could not add car: ', error);
     throw new Error('Error adding car');

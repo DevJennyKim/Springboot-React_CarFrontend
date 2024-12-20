@@ -130,8 +130,12 @@ function CarList() {
         alert('Car updated successfully!');
       } else {
         const response = await api.postCar(carData);
-        setCars((prevCars) => [...prevCars, response]);
-        alert('Car added successfully!');
+        if (response && response._links) {
+          setCars((prevCars) => [...prevCars, response]);
+          alert('Car added successfully!');
+        } else {
+          alert('Failed to add the car.');
+        }
       }
       setModalOpen(false);
       setSelectedCar(null);
@@ -142,17 +146,17 @@ function CarList() {
   };
 
   const columns = [
-    { field: 'brand', headerName: 'Brand', width: 200 },
-    { field: 'model', headerName: 'Model', width: 200 },
-    { field: 'color', headerName: 'Color', width: 200 },
-    { field: 'registerNumber', headerName: 'Register Number', width: 200 },
-    { field: 'year', headerName: 'Year', width: 150 },
-    { field: 'price', headerName: 'Price', width: 150 },
+    { field: 'brand', headerName: 'Brand', flex: 1 },
+    { field: 'model', headerName: 'Model', flex: 1 },
+    { field: 'color', headerName: 'Color', flex: 1 },
+    { field: 'registerNumber', headerName: 'Register Number', flex: 1 },
+    { field: 'year', headerName: 'Year', flex: 1 },
+    { field: 'price', headerName: 'Price', flex: 1 },
 
     {
       field: 'editActions',
       headerName: 'Edit',
-      width: 150,
+      flex: 0.3,
       sortable: false,
       filterable: false,
       renderCell: (params: GridRenderCellParams<type.Car>) => (
@@ -164,7 +168,7 @@ function CarList() {
     {
       field: 'deleteActions',
       headerName: 'Delete',
-      width: 150,
+      flex: 0.3,
       sortable: false,
       filterable: false,
       renderCell: (params: GridRenderCellParams<type.Car>) => (
@@ -183,7 +187,6 @@ function CarList() {
       <DataGrid
         rows={cars}
         columns={columns}
-        className=""
         disableRowSelectionOnClick={true}
         getRowId={(row) => row._links.self.href}
         slots={{ toolbar: CustomToolbar, footer: CustomFooter }}
