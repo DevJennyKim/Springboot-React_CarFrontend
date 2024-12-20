@@ -22,6 +22,7 @@ export interface FormData {
   brand: string;
   model: string;
   color: string;
+  registerNumber: string;
   year: number;
   price: number;
 }

@@ -1,6 +1,6 @@
 import {
   DataGrid,
-  gridClasses,
+  GridPagination,
   GridRenderCellParams,
   GridToolbarColumnsButton,
   GridToolbarContainer,
@@ -39,11 +39,26 @@ function CarList() {
   const [cars, setCars] = useState<type.Car[]>([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 12,
+    pageSize: 10,
   });
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCar, setSelectedCar] = useState<type.Car | null>(null);
-  const [action, setAction] = useState<string>('');
+
+  const CustomFooter = () => {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() => {
+            clickAdd();
+          }}
+        >
+          Add
+        </button>
+        <GridPagination />
+      </div>
+    );
+  };
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -51,7 +66,7 @@ function CarList() {
         const response = await api.getCars();
         const carsData = response._embedded?.cars || [];
         setCars(carsData);
-        console.log(carsData);
+        console.log('CarData:', carsData);
       } catch (error) {
         console.error('Error Fetching Cars: ', error);
       }
@@ -77,16 +92,19 @@ function CarList() {
     setSelectedCar(car);
     setModalOpen(true);
   };
-
-  const handleAddCar = async (carData: type.FormData) => {};
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedCar(null);
+  };
+  const clickAdd = async () => {
+    setModalOpen(true);
+  };
   const handleSaveCar = async (carData: type.FormData) => {
+    console.log(carData);
+
     try {
-      console.log('year: ', typeof carData.year);
-      console.log('price: ', typeof carData.price);
       const updatedCarData = {
         ...carData,
-        year: carData.year,
-        price: carData.price,
       };
       if (selectedCar) {
         await api.updateCar(selectedCar._links.self.href, updatedCarData);
@@ -98,17 +116,24 @@ function CarList() {
           )
         );
         alert('Car updated successfully!');
-        setModalOpen(false);
+      } else {
+        const response = await api.postCar(carData);
+        setCars((prevCars) => [...prevCars, response]);
+        alert('Car added successfully!');
       }
+      setModalOpen(false);
+      setSelectedCar(null);
     } catch (error) {
-      console.error('Error Updating Car: ', error);
-      alert('Failed to update the car.');
+      console.error('Error Saving Car: ', error);
+      alert('Failed to save the car.');
     }
   };
+
   const columns = [
     { field: 'brand', headerName: 'Brand', width: 200 },
     { field: 'model', headerName: 'Model', width: 200 },
     { field: 'color', headerName: 'Color', width: 200 },
+    { field: 'Register Number', headerName: 'Register Number', width: 200 },
     { field: 'year', headerName: 'Year', width: 150 },
     { field: 'price', headerName: 'Price', width: 150 },
 
@@ -143,13 +168,12 @@ function CarList() {
 
   return (
     <div className="grid">
-      <button type="button">Add</button>
       <DataGrid
         rows={cars}
         columns={columns}
         disableRowSelectionOnClick={true}
         getRowId={(row) => row._links.self.href}
-        slots={{ toolbar: CustomToolbar }}
+        slots={{ toolbar: CustomToolbar, footer: CustomFooter }}
         pagination
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
@@ -157,7 +181,7 @@ function CarList() {
       />
       <AddEditModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
         selectedCar={selectedCar}
         onSave={handleSaveCar}
       />

@@ -13,6 +13,15 @@ export const getCars = async () => {
   }
 };
 
+export const postCar = async (formData: type.FormData) => {
+  try {
+    await axios.post(`${baseUrl}/api/cars`, formData);
+  } catch (error) {
+    console.error('Could not add car: ', error);
+    throw new Error('Error adding car');
+  }
+};
+
 export const deleteCar = async (carHref: string) => {
   try {
     await axios.delete(carHref);

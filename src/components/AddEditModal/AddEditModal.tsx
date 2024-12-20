@@ -19,6 +19,7 @@ function AddEditModal({
     brand: '',
     model: '',
     color: '',
+    registerNumber: '',
     year: '',
     price: '',
   });
@@ -29,8 +30,18 @@ function AddEditModal({
         brand: selectedCar.brand,
         model: selectedCar.model,
         color: selectedCar.color,
+        registerNumber: selectedCar.registerNumber,
         year: selectedCar.year.toString(),
         price: selectedCar.price.toString(),
+      });
+    } else {
+      setFormData({
+        brand: '',
+        model: '',
+        color: '',
+        registerNumber: '',
+        year: '',
+        price: '',
       });
     }
   }, [selectedCar]);
@@ -52,9 +63,10 @@ function AddEditModal({
     };
     onSave(carData);
   };
+
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Car</DialogTitle>
+      <DialogTitle>{selectedCar ? 'Edit Car' : 'Add Car'}</DialogTitle>
       <DialogContent>
         <TextField
           label="Brand"
@@ -76,6 +88,15 @@ function AddEditModal({
           label="Color"
           name="color"
           value={formData.color}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Register Number"
+          name="Register Number"
+          type="string"
+          value={formData.registerNumber}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
@@ -104,7 +125,7 @@ function AddEditModal({
           Close
         </Button>
         <Button onClick={handleSave} color="primary">
-          Save
+          {selectedCar ? 'Save' : 'Add'}
         </Button>
       </DialogActions>
     </Dialog>
