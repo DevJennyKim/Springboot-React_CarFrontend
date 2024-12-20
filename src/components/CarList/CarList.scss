@@ -2,3 +2,22 @@
   height: 100%;
   width: 100%;
 }
+.btn-delete {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem;
+  border: none;
+  &:hover {
+    background-color: #d3d3d3;
+    // background-color: #dde7ee;
+  }
+}
+.btn-edit {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem;
+  border: none;
+  &:hover {
+    background-color: #dde7ee;
+  }
+}

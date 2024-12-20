@@ -94,7 +94,7 @@ function AddEditModal({
         />
         <TextField
           label="Register Number"
-          name="Register Number"
+          name="registerNumber"
           type="string"
           value={formData.registerNumber}
           onChange={handleInputChange}

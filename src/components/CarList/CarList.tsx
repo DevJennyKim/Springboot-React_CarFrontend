@@ -8,12 +8,16 @@ import {
   GridToolbarExport,
   GridToolbarFilterButton,
 } from '@mui/x-data-grid';
+import Box from '@mui/joy/Box';
+import Button from '@mui/joy/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import Add from '@mui/icons-material/Add';
 import './CarList.scss';
 import * as api from '../../api/api.ts';
 import * as type from '../../models/Index.js';
 import AddEditModal from '../AddEditModal/AddEditModal.tsx';
 import { useEffect, useState } from 'react';
-import { Box } from '@mui/material';
 // import Snackbar from '@mui/material/Snackbar';
 
 function CustomToolbar() {
@@ -46,17 +50,20 @@ function CarList() {
 
   const CustomFooter = () => {
     return (
-      <div>
-        <button
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Button
+          color="neutral"
+          variant="soft"
+          startDecorator={<Add />}
           type="button"
           onClick={() => {
             clickAdd();
           }}
         >
           Add
-        </button>
+        </Button>
         <GridPagination />
-      </div>
+      </Box>
     );
   };
 
@@ -64,7 +71,12 @@ function CarList() {
     const fetchCars = async () => {
       try {
         const response = await api.getCars();
-        const carsData = response._embedded?.cars || [];
+        const carsData =
+          response._embedded?.cars ||
+          [].map((car: type.Car) => ({
+            ...car,
+            registerNumber: car.registerNumber || '',
+          }));
         setCars(carsData);
         console.log('CarData:', carsData);
       } catch (error) {
@@ -133,7 +145,7 @@ function CarList() {
     { field: 'brand', headerName: 'Brand', width: 200 },
     { field: 'model', headerName: 'Model', width: 200 },
     { field: 'color', headerName: 'Color', width: 200 },
-    { field: 'Register Number', headerName: 'Register Number', width: 200 },
+    { field: 'registerNumber', headerName: 'Register Number', width: 200 },
     { field: 'year', headerName: 'Year', width: 150 },
     { field: 'price', headerName: 'Price', width: 150 },
 
@@ -144,8 +156,8 @@ function CarList() {
       sortable: false,
       filterable: false,
       renderCell: (params: GridRenderCellParams<type.Car>) => (
-        <button className="edit-button" onClick={() => editCar(params.row)}>
-          Edit
+        <button className="btn-edit" onClick={() => editCar(params.row)}>
+          <EditIcon />
         </button>
       ),
     },
@@ -157,10 +169,10 @@ function CarList() {
       filterable: false,
       renderCell: (params: GridRenderCellParams<type.Car>) => (
         <button
-          className="delete-button"
+          className="btn-delete"
           onClick={() => removeCar(params.row._links.self.href)}
         >
-          Delete
+          <DeleteIcon />
         </button>
       ),
     },
@@ -171,6 +183,7 @@ function CarList() {
       <DataGrid
         rows={cars}
         columns={columns}
+        className=""
         disableRowSelectionOnClick={true}
         getRowId={(row) => row._links.self.href}
         slots={{ toolbar: CustomToolbar, footer: CustomFooter }}
