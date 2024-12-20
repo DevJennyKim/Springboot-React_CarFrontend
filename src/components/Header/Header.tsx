@@ -7,7 +7,7 @@ function Header() {
     <div className="header">
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6">Car Shop</Typography>
+          <Typography variant="h6">Car Database</Typography>
         </Toolbar>
       </AppBar>
     </div>
